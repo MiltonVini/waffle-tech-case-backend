@@ -1,0 +1,16 @@
+services:
+  waffle-case:
+    image: mysql:5.7
+    container_name: waffle-case
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'the-news'
+      MYSQL_USER: 'docker'
+      MYSQL_PASSWORD: 'dockerdocker'
+      MYSQL_ROOT_PASSWORD: 'dockerdocker'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - './.mysql-data/db:/var/lib/mysql'
