@@ -7,6 +7,7 @@ import { env } from './env'
 import { getUserStatisticsRoutes } from './http/controllers/user-statics/routes'
 import { getAdminStatisticsRoutes } from './http/controllers/admin-statistics/routes'
 import cors from '@fastify/cors'
+import { createBagdeRoutes } from './http/controllers/badges/routes'
 
 export const app = fastify()
 
@@ -26,3 +27,4 @@ app.register(userReadingsRoutes)
 app.register(authenticateUserRoutes)
 app.register(getUserStatisticsRoutes)
 app.register(getAdminStatisticsRoutes)
+app.register(createBagdeRoutes)
