@@ -10,7 +10,7 @@ export class Mysql2UsersStreakRepository implements IUserStreakRepository {
     const connection = await getConnection()
 
     const [results] = await connection.execute(
-      'SELECT id, email, streak FROM user_streaks WHERE email = ?',
+      'SELECT id, email, streak, best_streak FROM user_streaks WHERE email = ?',
       [email],
     )
 
@@ -28,14 +28,23 @@ export class Mysql2UsersStreakRepository implements IUserStreakRepository {
     )
   }
 
+  async updateBestStreak(email: string, user_streak: number) {
+    const connection = await getConnection()
+
+    await connection.execute(
+      'UPDATE user_streaks SET best_streak = ? WHERE email = ?',
+      [user_streak, email],
+    )
+  }
+
   async create(email: string) {
     const connection = await getConnection()
 
     const id = uuidv4()
 
     await connection.execute(
-      'INSERT INTO user_streaks (id, email, streak) VALUES (?, ?, ?)',
-      [id, email, 1],
+      'INSERT INTO user_streaks (id, email, streak, best_streak) VALUES (?, ?, ?, ?)',
+      [id, email, 1, 1],
     )
   }
 }

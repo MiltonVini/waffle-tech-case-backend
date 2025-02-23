@@ -5,8 +5,14 @@ import { authenticateUserRoutes } from './http/controllers/authenticate/routes'
 import fastifyJwt from '@fastify/jwt'
 import { env } from './env'
 import { getUserStatisticsRoutes } from './http/controllers/user-statics/routes'
+import { getAdminStatisticsRoutes } from './http/controllers/admin-statistics/routes'
+import cors from '@fastify/cors'
 
 export const app = fastify()
+
+app.register(cors, {
+  origin: '*',
+})
 
 app.register(fastifyJwt, {
   secret: env.JWT_SECRET,
@@ -19,3 +25,4 @@ app.register(userRoutes)
 app.register(userReadingsRoutes)
 app.register(authenticateUserRoutes)
 app.register(getUserStatisticsRoutes)
+app.register(getAdminStatisticsRoutes)

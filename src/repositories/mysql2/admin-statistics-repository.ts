@@ -24,7 +24,7 @@ export class Mysql2AdminStatisticsRepository
     const connection = await getConnection()
 
     const [results] = await connection.execute(
-      `SELECT id, email, streak FROM user_streaks ORDER BY streak DESC`,
+      `SELECT id, email, streak, best_streak FROM user_streaks ORDER BY streak DESC LIMIT 100`,
     )
 
     const usersStreaks = results as IUsersStreaksOutput[]
@@ -44,17 +44,24 @@ export class Mysql2AdminStatisticsRepository
           ELSE 'nigth' END AS reading_period, 
           COUNT(id) AS count 
           FROM user_readings 
-          GROUP BY email, reading_period`,
+          GROUP BY email, reading_period
+          LIMIT 100`,
     )
 
     return results as IUsersReadingPeriodsOutput[]
   }
 
-  async getUsers() {
+  async getNewUsersLast7DaysVersusPreviousWeek() {
     const connection = await getConnection()
 
     const [results] = await connection.execute(
-      `SELECT id, email, created_at FROM users`,
+      `SELECT COUNT(
+          CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) THEN 1 END
+        ) AS last_7_days_new_users_count,
+          COUNT(
+          CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 14 DAY) AND created_at < DATE_SUB(NOW(), INTERVAL 7 DAY) THEN 1 END
+        ) AS previous_week_new_users_count
+        FROM users`,
     )
 
     return results as IUsersOutput[]
@@ -64,7 +71,7 @@ export class Mysql2AdminStatisticsRepository
     const connection = await getConnection()
 
     const [results] = await connection.execute(
-      `SELECT utm_source, COUNT(id) FROM user_readings GROUP BY utm_source`,
+      `SELECT utm_source, COUNT(id) as read_count FROM user_readings GROUP BY utm_source`,
     )
 
     return results as IReadCountBySourceOutput[]
@@ -74,7 +81,7 @@ export class Mysql2AdminStatisticsRepository
     const connection = await getConnection()
 
     const [results] = await connection.execute(
-      `SELECT id, COUNT(id) FROM user_readings GROUP BY id`,
+      `SELECT id, COUNT(id) as read_count FROM user_readings GROUP BY id`,
     )
 
     return results as IReadCountByPostOutput[]

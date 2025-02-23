@@ -28,6 +28,7 @@ export class GetUserStatisticsController {
 
       return reply.status(200).send({
         streak: userStatistics.userStreak.streak,
+        best_streak: userStatistics.userStreak.best_streak,
         register_days: userStatistics.userRegisterDays,
         read_count: userStatistics.allUserReadingsCount,
         user_favorite_reading_period:

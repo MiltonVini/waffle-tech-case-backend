@@ -52,13 +52,21 @@ export class UpdateUserStreakUseCase {
 
       if (daysBetweenReadings === 1) {
         console.log('Aumentando o streak')
-        const currentStreak = await this.usersStreakRepository.getUserStreak(
+        const userStreak = await this.usersStreakRepository.getUserStreak(
           data.email,
         )
 
-        const newStreak = Number(currentStreak.streak) + 1
+        const userBestStreak = Number(userStreak.best_streak)
+        const newStreak = Number(userStreak.streak) + 1
 
         await this.usersStreakRepository.update(data.email, newStreak)
+
+        if (newStreak > userBestStreak) {
+          await this.usersStreakRepository.updateBestStreak(
+            data.email,
+            newStreak,
+          )
+        }
 
         return
       }
@@ -70,13 +78,21 @@ export class UpdateUserStreakUseCase {
         userCurrentReadingWeekDay === 1
       ) {
         console.log('Aumentando o streak, pulando o domingo')
-        const currentStreak = await this.usersStreakRepository.getUserStreak(
+        const userStreak = await this.usersStreakRepository.getUserStreak(
           data.email,
         )
 
-        const newStreak = Number(currentStreak.streak) + 1
+        const userBestStreak = Number(userStreak.best_streak)
+        const newStreak = Number(userStreak.streak) + 1
 
         await this.usersStreakRepository.update(data.email, newStreak)
+
+        if (newStreak > userBestStreak) {
+          await this.usersStreakRepository.updateBestStreak(
+            data.email,
+            newStreak,
+          )
+        }
 
         return
       }

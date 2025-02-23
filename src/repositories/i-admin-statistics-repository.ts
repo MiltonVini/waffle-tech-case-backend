@@ -2,6 +2,7 @@ export interface IUsersStreaksOutput {
   id: string
   email: string
   streak: number
+  best_streak: number
 }
 
 export interface IUsersReadingPeriodsOutput {
@@ -18,9 +19,8 @@ export interface IUsersStatusOutput {
 }
 
 export interface IUsersOutput {
-  id: string
-  email: string
-  created_at: string
+  last_7_days_new_users_count: number
+  previous_week_new_users_count: number
 }
 
 export interface IReadCountBySourceOutput {
@@ -33,11 +33,19 @@ export interface IReadCountByPostOutput {
   count: number
 }
 
+export type StatisticsMapOutput =
+  | IUsersStatusOutput[]
+  | IUsersStreaksOutput[]
+  | IUsersReadingPeriodsOutput[]
+  | IUsersOutput[]
+  | IReadCountBySourceOutput[]
+  | IReadCountByPostOutput[]
+
 export interface IAdminStatisticsRepository {
   getUsersStatus(): Promise<IUsersStatusOutput[]>
   getUsersStreaks(): Promise<IUsersStreaksOutput[]>
   getUsersReadingPeriods(): Promise<IUsersReadingPeriodsOutput[]>
-  getUsers(): Promise<IUsersOutput[]>
+  getNewUsersLast7DaysVersusPreviousWeek(): Promise<IUsersOutput[]>
   getReadCountBySource(): Promise<IReadCountBySourceOutput[]>
   getReadCountByPost(): Promise<IReadCountByPostOutput[]>
 }
