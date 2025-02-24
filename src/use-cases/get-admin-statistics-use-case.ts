@@ -12,8 +12,12 @@ export class GetAdminStatisticsUseCase {
   async execute(statistic: string) {
     const statisticsMap: Record<string, () => Promise<StatisticsMapOutput>> = {
       users_streaks: () => this.adminStatisticsRepository.getUsersStreaks(),
+      users_count_by_streaks: () =>
+        this.adminStatisticsRepository.getUserCountByStreaks(),
       users_reading_periods: () =>
         this.adminStatisticsRepository.getUsersReadingPeriods(),
+      read_count_by_reading_period: () =>
+        this.adminStatisticsRepository.getUsersCountByReadingPeriod(),
       new_users: () =>
         this.adminStatisticsRepository.getNewUsersLast7DaysVersusPreviousWeek(),
       read_count_by_post: () =>

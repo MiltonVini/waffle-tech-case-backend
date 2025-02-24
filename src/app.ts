@@ -8,11 +8,13 @@ import { getUserStatisticsRoutes } from './http/controllers/user-statics/routes'
 import { getAdminStatisticsRoutes } from './http/controllers/admin-statistics/routes'
 import cors from '@fastify/cors'
 import { createBagdeRoutes } from './http/controllers/badges/routes'
+import { ensureAuthenticated } from './middlewares/ensure-authenticated'
 
 export const app = fastify()
 
 app.register(cors, {
-  origin: '*',
+  origin: 'http://127.0.0.1:5173',
+  credentials: true,
 })
 
 app.register(fastifyJwt, {
@@ -22,9 +24,15 @@ app.register(fastifyJwt, {
   },
 })
 
-app.register(userRoutes)
-app.register(userReadingsRoutes)
 app.register(authenticateUserRoutes)
-app.register(getUserStatisticsRoutes)
+
+app.register(async (protectedRoutes) => {
+  protectedRoutes.addHook('preHandler', ensureAuthenticated)
+
+  protectedRoutes.register(userRoutes)
+  protectedRoutes.register(userReadingsRoutes)
+  protectedRoutes.register(getUserStatisticsRoutes)
+  protectedRoutes.register(createBagdeRoutes)
+})
+
 app.register(getAdminStatisticsRoutes)
-app.register(createBagdeRoutes)
