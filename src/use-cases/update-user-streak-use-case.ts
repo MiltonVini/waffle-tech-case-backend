@@ -29,9 +29,6 @@ export class UpdateUserStreakUseCase {
     const userLastReadingDate = userLastReading?.created_at
     const userCurrentReadingDate = data.created_at ?? new Date()
 
-    console.log(userCurrentReadingDate)
-    console.log(userLastReadingDate)
-
     if (userLastReadingDate) {
       const timeBetweenReadings =
         new Date(userCurrentReadingDate).getTime() -
@@ -41,17 +38,12 @@ export class UpdateUserStreakUseCase {
         timeBetweenReadings / (1000 * 60 * 60 * 24),
       )
 
-      console.log(new Date(userLastReadingDate).getDay())
-
       const userLastReadingWeekDay = new Date(userLastReadingDate).getDay()
       const userCurrentReadingWeekDay = new Date(
         userCurrentReadingDate,
       ).getDay()
 
-      // console.log(daysBetweenReadings)
-
       if (daysBetweenReadings === 1) {
-        console.log('Aumentando o streak')
         const userStreak = await this.usersStreakRepository.getUserStreak(
           data.email,
         )
@@ -77,7 +69,6 @@ export class UpdateUserStreakUseCase {
         userLastReadingWeekDay === 6 &&
         userCurrentReadingWeekDay === 1
       ) {
-        console.log('Aumentando o streak, pulando o domingo')
         const userStreak = await this.usersStreakRepository.getUserStreak(
           data.email,
         )
@@ -98,7 +89,6 @@ export class UpdateUserStreakUseCase {
       }
 
       if (daysBetweenReadings > 1) {
-        console.log('Volta o streak para um')
         await this.usersStreakRepository.update(data.email, 1)
 
         return
@@ -106,7 +96,6 @@ export class UpdateUserStreakUseCase {
     }
 
     if (!userLastReadingDate) {
-      console.log('Criando o primeiro streak')
       await this.usersStreakRepository.create(data.email)
     }
   }
