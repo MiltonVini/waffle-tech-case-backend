@@ -2,6 +2,7 @@ import { Mysql2UsersRepository } from '@/repositories/mysql2/users-repository'
 import { AuthenticateUserUseCase } from '@/use-cases/authenticate-user-use-case'
 import { InvalidCredentialsError } from '@/use-cases/errors/invalid-credentials-error'
 import { FastifyReply, FastifyRequest } from 'fastify'
+import { env } from 'process'
 import { z } from 'zod'
 
 export class AuthenticateUserController {
@@ -16,23 +17,26 @@ export class AuthenticateUserController {
     const { email } = authenticateParamsSchema.parse(request.query)
 
     try {
-      const userAuthenticated = await useCase.execute(email)
+      const userFound = await useCase.execute(email)
 
-      if (userAuthenticated) {
+      if (userFound) {
         const authToken = await reply.jwtSign(
           {
-            email: userAuthenticated.email,
+            email: userFound.email,
           },
           {
             sign: {
-              sub: userAuthenticated.id,
+              sub: userFound.id,
             },
           },
         )
 
+        const autoLoginLink = `${env.FRONTEND_URL}/auth?token=${authToken}`
+
         return reply.status(200).send({
           message: 'Valid user',
           authToken,
+          autoLogin: autoLoginLink,
         })
       }
     } catch (error) {
